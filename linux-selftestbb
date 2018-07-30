@@ -1,0 +1,45 @@
+SUMMARY = "Linux kernel selftest" 
+SECTION = "kernel"
+LICENSE = "GPLv2"
+
+DEPENDS += "virtual/kernel clang libcap-ng elfutils"
+RDEPENDS_${PN} += "libgcc"
+
+PROVIDES = "virtual/kselftest"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+B = "${S}/output"
+O = "${B}"
+OUTPUT_IMAGE = "${D}/opt/kselftest/"
+
+KSELFTEST_SRC ?= "tools/testing/selftests/"
+
+EXTRA_OEMAKE = '\
+    CROSS_COMPILE=${TARGET_PREFIX} \
+    ARCH=${ARCH} \
+    CC="${CC}" \
+    AR="${AR}" \
+    LD="${LD}" \
+    O=${O} \
+'
+
+EXTRA_OEMAKE += "\
+    'DESTDIR=${D}' \
+    'prefix=${prefix}' \
+    'bindir=${bindir}' \
+    'sharedir=${datadir}' \
+    'sysconfdir=${sysconfdir}' \
+"
+
+do_compile() {
+    oe_runmake -C ${STAGING_KERNEL_DIR}/tools/testing/selftests/bpf \
+    oe_runmake -C ${STAGING_KERNEL_DIR}/tools/testing/selftests/vm \
+}
+
+do_install() {
+    mkdir -p ${OUTPUT_IMAGE}
+    install -m 0755 ${O}/* ${OUTPUT_IMAGE}
+}
+
+FILES_${PN} += "/opt/kselftest/"
