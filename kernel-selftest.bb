@@ -9,6 +9,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7 \
 SRC_URI_libc-musl += "file://userfaultfd.patch \
                       file://0001-bpf-test_progs.c-add-support-for-musllibc.patch \
 "
+SRC_URI += "file://run-ptest \
+"
 
 PACKAGECONFIG ??= "bpf vm"
 
@@ -17,7 +19,7 @@ PACKAGECONFIG[vm] = ",,,libgcc bash"
 
 do_patch[depends] += "virtual/kernel:do_shared_workdir"
 
-inherit linux-kernel-base kernel-arch
+inherit linux-kernel-base kernel-arch ptest
 
 do_populate_lic[depends] += "virtual/kernel:do_patch"
 
