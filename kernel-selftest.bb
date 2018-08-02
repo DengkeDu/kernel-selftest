@@ -49,6 +49,16 @@ KERNEL_SELFTEST_SRC ?= "Makefile \
 			COPYING \
 "
 
+python __anonymous () {
+    import re
+
+    var = d.getVar('TARGET_CC_ARCH')
+    pattern = '_FORTIFY_SOURCE=[^0]'
+
+    if re.search(pattern, var):
+        d.appendVar('TARGET_CC_ARCH', " -O")
+}
+
 do_compile() {
     for i in ${TEST_LIST}
     do
